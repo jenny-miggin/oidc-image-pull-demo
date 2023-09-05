@@ -1,0 +1,33 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@4.1.0
+
+jobs:
+  aws-example:
+    environment:
+      AWS_REGION: eu-west-1
+      AWS_ACCOUNT_ID: "483285841698"
+    docker:
+      - image: cimg/aws:2022.06
+    steps:
+      - checkout
+      # run the aws-cli/setup command from the orb
+      - aws-cli/setup:
+          role_arn: "arn:aws:iam::483285841698:role/container-runner-ecr-read-only"
+          region: $AWS_REGION
+          session_duration: "900"
+      - run:
+          name: Log-into-AWS-ECR
+          command: |
+            # must use same profile specified in the step above
+            aws ecr get-login-password --region $AWS_REGION | docker login -u AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+      - run:
+          name: list images
+          command: |
+            aws ecr list-images --repository-name container-runner-image-builder
+  
+workflows:
+  OIDC-with-AWS:
+    jobs:
+      - aws-example
