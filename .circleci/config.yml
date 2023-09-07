@@ -13,7 +13,7 @@ jobs:
     steps:
       - checkout
       # run the aws-cli/setup command from the orb
-      - aws-cli/assume_role_with_web_identity:
+      - aws-cli/setup:
           role_arn: "arn:aws:iam::483285841698:role/container-runner-ecr-read-only"
           region: $AWS_REGION
           session_duration: "900"
