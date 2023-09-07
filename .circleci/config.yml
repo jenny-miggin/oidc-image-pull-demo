@@ -13,7 +13,7 @@ jobs:
     steps:
       - checkout
       # run the aws-cli/setup command from the orb
-      - aws-cli/setup:
+      - aws-cli/assume_role_with_web_identity:
           role_arn: "arn:aws:iam::483285841698:role/container-runner-ecr-read-only"
           region: $AWS_REGION
           session_duration: "900"
@@ -25,7 +25,7 @@ jobs:
       - run:
           name: list images
           command: |
-            aws ecr list-images --repository-name container-runner-image-builder
+            aws ecr list-images --repository-name container-runner-image-builder --profile default
   
 workflows:
   OIDC-with-AWS:
