@@ -4,7 +4,7 @@ orbs:
   aws-cli: circleci/aws-cli@4.1.0
 
 jobs:
-  aws-example:
+  list-images:
     environment:
       AWS_REGION: eu-west-1
       AWS_ACCOUNT_ID: "483285841698"
@@ -27,8 +27,18 @@ jobs:
           name: list images
           command: |
             aws ecr list-images --repository-name container-runner-image-builder
+  use-custom-image:
+    docker:
+      - image: 483285841698.dkr.ecr.eu-west-1.amazonaws.com/container-runner-image-builder
+        aws_auth:
+          oidc_role_arn: "arn:aws:iam::483285841698:role/container-runner-ecr-read-only"
+    steps:
+      - run: "hello world"
   
 workflows:
   OIDC-with-AWS:
     jobs:
-      - aws-example
+      - list-images
+      - use-custom-image:
+          requires:
+            - list-images
