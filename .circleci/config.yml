@@ -26,7 +26,7 @@ jobs:
       - run:
           name: list images
           command: |
-            aws ecr list-images --repository-name container-runner-image-builder --profile default
+            aws ecr list-images --repository-name container-runner-image-builder
   
 workflows:
   OIDC-with-AWS:
